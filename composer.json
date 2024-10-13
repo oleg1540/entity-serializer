@@ -1,5 +1,5 @@
 {
-    "name": "ovksoft/entity-serializer",
+    "name": "oleg1540/entity-serializer",
     "description": "Serializer helps fast and simple serialize and unserialize objects into/from array",
     "type": "library",
     "require-dev": {
