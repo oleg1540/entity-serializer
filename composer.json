@@ -1,0 +1,22 @@
+{
+    "name": "ovksoft/entity-serializer",
+    "description": "Serializer helps fast and simple serialize and unserialize objects into/from array",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^1.12"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ovksoft\\EntitySerializer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Kolesov Oleg",
+            "email": "oleg14wo1@yandex.ru"
+        }
+    ],
+    "require": {}
+}
