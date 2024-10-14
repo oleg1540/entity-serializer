@@ -117,6 +117,9 @@ class EntitySerializer implements EntitySerializerInterface
         $reflection = new ReflectionClass($entity);
         $properties = $reflection->getProperties();
         foreach ($properties as $property) {
+            if (!$property->isInitialized($entity)) {
+                continue;
+            }
             $value = $entity->{$property->name};
             $propertyType = $property->getType();
             if (!$propertyType instanceof ReflectionNamedType) {
