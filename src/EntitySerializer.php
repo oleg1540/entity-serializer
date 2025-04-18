@@ -33,7 +33,7 @@ class EntitySerializer implements EntitySerializerInterface
      */
     public function __construct(
         string $entityClass,
-        string $dateTimeFormat = 'Y-m-d H:i:s',
+        string $dateTimeFormat = DATE_RFC3339_EXTENDED,
     )
     {
         $this->entityClass = $entityClass;
@@ -64,7 +64,6 @@ class EntitySerializer implements EntitySerializerInterface
                         continue;
                     }
                     $propertyClass = new ReflectionClass($propertyClassName);
-                    // && $property->getType() instanceof ReflectionNamedType
                     if ($propertyClass->isSubclassOf(DateTimeInterface::class) && is_string($value)) {
                         $date = DateTime::createFromFormat($this->dateTimeFormat, $value) ?: new DateTime($value);
                         $v = $date;
@@ -153,7 +152,10 @@ class EntitySerializer implements EntitySerializerInterface
                                 if (!isset($this->serializers[$arrayClass->name])) {
                                     $this->serializers[$arrayClass->name] = new EntitySerializer($arrayClass->name);
                                 }
-                                $value = array_map(fn(array $vItem) => $this->serializers[$arrayClass->name]->unserialize($vItem), $entity->{$property->name});
+                                $value = array_map(
+                                    fn(EntitySerializableInterface $vItem) => $this->serializers[$arrayClass->name]->serialize($vItem),
+                                    $entity->{$property->name},
+                                );
                             }
                         } catch (ReflectionException) {
                         }
