@@ -31,9 +31,12 @@ class EntitySerializerCamelToSnake extends EntitySerializer
         $transformData = [];
         foreach ($data as $key => $value) {
             $key = $direction ? self::camelToSnake($key) : self::snakeToCamel($key);
-            $transformData[$key] = is_array($value) && array_filter(array_keys($value), 'is_string') !== []
-                ? $this->transformArray($value, $direction)
-                : $value;
+            if (is_array($value) && array_filter(array_keys($value), 'is_string') !== []) {
+                /** @var array<string, mixed> $value */
+                $transformData[$key] = $this->transformArray($value, $direction);
+            } else {
+                $transformData[$key] = $value;
+            }
         }
 
         return $transformData;

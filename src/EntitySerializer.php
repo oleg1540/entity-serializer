@@ -68,7 +68,7 @@ class EntitySerializer implements EntitySerializerInterface
                         $date = DateTime::createFromFormat($this->dateTimeFormat, $value) ?: new DateTime($value);
                         $v = $date;
                     } else if (enum_exists($propertyClassName) && (is_string($value) || is_int($value))) {
-                        /** @var BackedEnum $propertyClassName */
+                        /** @var class-string<BackedEnum> $propertyClassName */
                         $v = $propertyClassName::tryFrom($value);
                     } else {
                         if (empty($value)) {
@@ -79,6 +79,7 @@ class EntitySerializer implements EntitySerializerInterface
                             if (!isset($this->serializers[$propertyClass->name])) {
                                 $this->serializers[$propertyClass->name] = new EntitySerializer($propertyClass->name);
                             }
+                            /** @var array<string, mixed> $value */
                             $v = $this->serializers[$propertyClass->name]->unserialize($value);
                         }
                     }
@@ -92,6 +93,7 @@ class EntitySerializer implements EntitySerializerInterface
                                     if (!isset($this->serializers[$arrayClass->name])) {
                                         $this->serializers[$arrayClass->name] = new EntitySerializer($arrayClass->name);
                                     }
+                                    /** @var array<array<string, mixed>> $value */
                                     $v = array_map(fn(array $vItem) => $this->serializers[$arrayClass->name]->unserialize($vItem), $value);
                                 }
                             } catch (ReflectionException) {
