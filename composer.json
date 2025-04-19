@@ -9,7 +9,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Ovksoft\\EntitySerializer\\": "src/"
+            "Ovksoft\\EntitySerializer\\": "src/",
+            "Ovksoft\\EntitySerializer\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -17,6 +18,5 @@
             "name": "Kolesov Oleg",
             "email": "oleg14wo1@yandex.ru"
         }
-    ],
-    "require": {}
+    ]
 }
