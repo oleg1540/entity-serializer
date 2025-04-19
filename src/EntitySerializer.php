@@ -10,10 +10,8 @@ use DateTimeInterface;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionProperty;
-use ReflectionUnionType;
 
 /**
  * @template T of EntitySerializableInterface
@@ -137,30 +135,32 @@ class EntitySerializer implements EntitySerializerInterface
                 if ($propertyClass->isSubclassOf(DateTimeInterface::class)) {
                     $value = $entity->{$property->name}->format($this->dateTimeFormat);
                 } else if (enum_exists($propertyClassName)) {
-                    $value = $entity->{$property->name}->value;
+                    $value = is_subclass_of($propertyClassName, BackedEnum::class)
+                        ? $entity->{$property->name}->value
+                        : $entity->{$property->name}->name;
                 } else if ($propertyClass->isSubclassOf(EntitySerializableInterface::class)) {
                     if (!isset($this->serializers[$propertyClass->name])) {
                         $this->serializers[$propertyClass->name] = new EntitySerializer($propertyClass->name);
                     }
                     $value = $this->serializers[$propertyClass->name]->serialize($entity->{$property->name});
                 }
-            } else {
-                if ($propertyClassName === 'array' && $entity->{$property->name} !== [] && $property->getDocComment() !== false) {
-                    if (preg_match('/@var\s+([^\s]+)\[]\s+/i', $property->getDocComment(), $matches) === 1 && class_exists($matches[1])) {
-                        // @todo not work with classes without namespace
-                        try {
-                            $arrayClass = new ReflectionClass($matches[1]);
-                            if ($arrayClass->isSubclassOf(EntitySerializableInterface::class)) {
-                                if (!isset($this->serializers[$arrayClass->name])) {
-                                    $this->serializers[$arrayClass->name] = new EntitySerializer($arrayClass->name);
-                                }
-                                $value = array_map(
-                                    fn(EntitySerializableInterface $vItem) => $this->serializers[$arrayClass->name]->serialize($vItem),
-                                    $entity->{$property->name},
-                                );
-                            }
-                        } catch (ReflectionException) {
+            } else if ($propertyClassName === 'array' && $entity->{$property->name} !== []) {
+                $arrayClass = null;
+                $reflectionAttribute = current($property->getAttributes(SerializeAs::class));
+                if ($reflectionAttribute !== false) {
+                    $arrayClass = $reflectionAttribute->getArguments()[0] ?? null;
+                }
+
+                if ($arrayClass !== null && class_exists($arrayClass)) {
+                    $arrayClass = new ReflectionClass($arrayClass);
+                    if ($arrayClass->isSubclassOf(EntitySerializableInterface::class)) {
+                        if (!isset($this->serializers[$arrayClass->name])) {
+                            $this->serializers[$arrayClass->name] = new EntitySerializer($arrayClass->name);
                         }
+                        $value = array_map(
+                            fn(EntitySerializableInterface $vItem) => $this->serializers[$arrayClass->name]->serialize($vItem),
+                            $entity->{$property->name},
+                        );
                     }
                 }
             }
