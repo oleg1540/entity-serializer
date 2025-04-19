@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Ovksoft\EntitySerializer;
 
-/**
- * @template T of EntitySerializableInterface
- */
 interface EntitySerializerInterface
 {
     /**
+     * @template T of EntitySerializableInterface
+     * @param class-string<T> $entityClass
      * @param array<string, mixed> $data
      * @return T
      */
-    public function unserialize(array $data): EntitySerializableInterface;
+    public function deserialize(string $entityClass, array $data): EntitySerializableInterface;
 
     /**
-     * @param T $entity
      * @return array<string, mixed>
      */
-    public function serialize(object $entity): array;
+    public function serialize(EntitySerializableInterface $entity): array;
 }
