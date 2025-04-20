@@ -24,7 +24,7 @@ class EntitySerializer implements EntitySerializerInterface
     /**
      * @throws Exception
      */
-    public function deserialize(string $entityClass, array $data): EntitySerializableInterface
+    public function deserialize(string $entityClass, array $data): object
     {
         $obj = new $entityClass();
         foreach ($data as $key => $value) {
@@ -50,7 +50,7 @@ class EntitySerializer implements EntitySerializerInterface
                     } else if (enum_exists($propertyClassName) && (is_string($value) || is_int($value))) {
                         $v = is_subclass_of($propertyClassName, BackedEnum::class)
                             ? $propertyClassName::tryFrom($value)
-                            : $propertyClassName::{$value};
+                            : (is_string($value) ? $propertyClassName::{$value} : null);
                     } else {
                         if (empty($value)) {
                             continue;

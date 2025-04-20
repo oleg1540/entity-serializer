@@ -13,7 +13,7 @@ class Item implements EntitySerializableInterface
     public int $id;
     public string $name;
 
-    /** @var array string[] */
+    /** @var string[] $nameList */
     public array $nameList = [];
     public bool $isDeleted;
     public float $floatValue;
