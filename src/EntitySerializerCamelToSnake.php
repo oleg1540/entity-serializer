@@ -4,22 +4,33 @@ declare(strict_types=1);
 
 namespace Ovksoft\EntitySerializer;
 
-/**
- * @template T of EntitySerializableInterface
- * @extends EntitySerializer<T>
- */
-class EntitySerializerCamelToSnake extends EntitySerializer
-{
-    public function serialize(object $entity): array
-    {
-        $array = parent::serialize($entity);
+use Exception;
+use ReflectionException;
 
-        return $this->transformArray($array, true);
+class EntitySerializerCamelToSnake implements EntitySerializerInterface
+{
+    private const DEFAULT_WORD_SEPARATOR  = '_';
+
+    public function __construct(
+        private readonly EntitySerializerInterface $serializer = new EntitySerializer(),
+    )
+    {
     }
 
-    public function unserialize(array $data): EntitySerializableInterface
+    /**
+     * @throws ReflectionException
+     */
+    public function serialize(EntitySerializableInterface $entity): array
     {
-        return parent::unserialize($this->transformArray($data, false));
+        return $this->transformArray($this->serializer->serialize($entity), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function deserialize(string $entityClass, array $data): object
+    {
+        return $this->serializer->deserialize($entityClass, $this->transformArray($data, false));
     }
 
     /**
@@ -45,7 +56,7 @@ class EntitySerializerCamelToSnake extends EntitySerializer
     /**
      * @return string snake_case to camelCase using words separator
      */
-    private function snakeToCamel(string $string, string $separator = '_'): string
+    private function snakeToCamel(string $string, string $separator = self::DEFAULT_WORD_SEPARATOR): string
     {
         return str_replace($separator, '', lcfirst(ucwords($string, $separator)));
     }
@@ -53,7 +64,7 @@ class EntitySerializerCamelToSnake extends EntitySerializer
     /**
      * @return string camelCase to snake_case using words separator
      */
-    private function camelToSnake(string $string, string $separator = '_'): string
+    private function camelToSnake(string $string, string $separator = self::DEFAULT_WORD_SEPARATOR): string
     {
         $replacement = preg_replace('/(?<!^)[A-Z]/', "$separator$0", $string);
 

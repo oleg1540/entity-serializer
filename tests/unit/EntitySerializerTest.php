@@ -62,11 +62,14 @@ class EntitySerializerTest extends TestCase
         $this->assertEquals($item->externalId, $data['externalId'], 'Wrong externalId');
         $this->assertArrayNotHasKey('uninitialized', $data, 'Wrong uninitialized');
 
+        $this->assertIsArray($data['subItems'], 'SubItems is not array');
         $this->assertCount(count($item->subItems), $data['subItems'], 'Wrong subItems number');
 
+        $this->assertIsArray($data['subItems'][0], 'SubItems[0] is not array');
         $this->assertEquals($item->subItems[0]->id, $data['subItems'][0]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[0]->name, $data['subItems'][0]['name'], 'Wrong subItem name');
 
+        $this->assertIsArray($data['subItems'][1], 'SubItems[1] is not array');
         $this->assertEquals($item->subItems[1]->id, $data['subItems'][1]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[1]->name, $data['subItems'][1]['name'], 'Wrong subItem name');
     }
