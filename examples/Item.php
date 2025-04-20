@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovksoft\EntitySerializer\Tests\mock;
+namespace Ovksoft\EntitySerializer\Examples;
 
 use DateTime;
 use Ovksoft\EntitySerializer\EntitySerializableInterface;

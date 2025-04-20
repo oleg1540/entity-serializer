@@ -86,7 +86,7 @@ class EntitySerializer implements EntitySerializerInterface
     /**
      * @throws ReflectionException
      */
-    public function serialize(object $entity): array
+    public function serialize(EntitySerializableInterface $entity): array
     {
         $array = [];
         $reflection = new ReflectionClass($entity);

@@ -10,7 +10,8 @@
     "autoload": {
         "psr-4": {
             "Ovksoft\\EntitySerializer\\": "src/",
-            "Ovksoft\\EntitySerializer\\Tests\\": "tests/"
+            "Ovksoft\\EntitySerializer\\Tests\\": "tests/",
+            "Ovksoft\\EntitySerializer\\Examples\\": "examples/"
         }
     },
     "authors": [

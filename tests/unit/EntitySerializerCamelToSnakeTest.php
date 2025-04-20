@@ -7,10 +7,10 @@ namespace Ovksoft\EntitySerializer\Tests\unit;
 use DateTime;
 use Exception;
 use Ovksoft\EntitySerializer\EntitySerializerCamelToSnake;
-use Ovksoft\EntitySerializer\Tests\mock\Item;
-use Ovksoft\EntitySerializer\Tests\mock\SizeEnum;
-use Ovksoft\EntitySerializer\Tests\mock\StatusEnum;
-use Ovksoft\EntitySerializer\Tests\mock\SubItem;
+use Ovksoft\EntitySerializer\Examples\Item;
+use Ovksoft\EntitySerializer\Examples\SizeEnum;
+use Ovksoft\EntitySerializer\Examples\StatusEnum;
+use Ovksoft\EntitySerializer\Examples\SubItem;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
