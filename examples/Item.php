@@ -26,4 +26,6 @@ class Item implements EntitySerializableInterface
     /** @var SubItem[] $subItems */
     #[SerializeAs(SubItem::class)]
     public array $subItems;
+
+    private bool $internalFlag = false;
 }

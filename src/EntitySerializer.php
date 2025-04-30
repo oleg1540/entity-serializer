@@ -32,6 +32,9 @@ class EntitySerializer implements EntitySerializerInterface
                 $v = $value;
 
                 $property = new ReflectionProperty($obj, $key);
+                if (!$property->isPublic()) {
+                    continue;
+                }
                 $propertyType = $property->getType();
                 if (!$propertyType instanceof ReflectionNamedType) {
                     continue;
@@ -90,7 +93,7 @@ class EntitySerializer implements EntitySerializerInterface
     {
         $array = [];
         $reflection = new ReflectionClass($entity);
-        $properties = $reflection->getProperties();
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
         foreach ($properties as $property) {
             if (!$property->isInitialized($entity)) {
                 continue;
