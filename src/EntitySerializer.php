@@ -28,59 +28,60 @@ class EntitySerializer implements EntitySerializerInterface
     {
         $obj = new $entityClass();
         foreach ($data as $key => $value) {
-            if (property_exists($obj, $key)) {
-                $v = $value;
+            if (!is_string($key) || !property_exists($obj, $key)) {
+                continue;
+            }
+            $v = $value;
 
-                $property = new ReflectionProperty($obj, $key);
-                if (!$property->isPublic()) {
+            $property = new ReflectionProperty($obj, $key);
+            if (!$property->isPublic()) {
+                continue;
+            }
+            $propertyType = $property->getType();
+            if (!$propertyType instanceof ReflectionNamedType) {
+                continue;
+            }
+            $propertyClassName = $propertyType->getName();
+            $isBuiltIn = $propertyType->isBuiltin();
+
+            if (!$isBuiltIn) {
+                if (!class_exists($propertyClassName)) {
                     continue;
                 }
-                $propertyType = $property->getType();
-                if (!$propertyType instanceof ReflectionNamedType) {
-                    continue;
-                }
-                $propertyClassName = $propertyType->getName();
-                $isBuiltIn = $propertyType->isBuiltin();
-
-                if (!$isBuiltIn) {
-                    if (!class_exists($propertyClassName)) {
+                $propertyClass = new ReflectionClass($propertyClassName);
+                if ($propertyClass->isSubclassOf(DateTimeInterface::class) && is_string($value)) {
+                    $date = DateTime::createFromFormat($this->params->dateTimeFormat, $value) ?: new DateTime($value);
+                    $v = $date;
+                } else if (enum_exists($propertyClassName) && (is_string($value) || is_int($value))) {
+                    $v = is_subclass_of($propertyClassName, BackedEnum::class)
+                        ? $propertyClassName::tryFrom($value)
+                        : (is_string($value) ? $propertyClassName::{$value} : null);
+                } else {
+                    if (empty($value)) {
                         continue;
                     }
-                    $propertyClass = new ReflectionClass($propertyClassName);
-                    if ($propertyClass->isSubclassOf(DateTimeInterface::class) && is_string($value)) {
-                        $date = DateTime::createFromFormat($this->params->dateTimeFormat, $value) ?: new DateTime($value);
-                        $v = $date;
-                    } else if (enum_exists($propertyClassName) && (is_string($value) || is_int($value))) {
-                        $v = is_subclass_of($propertyClassName, BackedEnum::class)
-                            ? $propertyClassName::tryFrom($value)
-                            : (is_string($value) ? $propertyClassName::{$value} : null);
-                    } else {
-                        if (empty($value)) {
-                            continue;
-                        }
 
-                        if ($propertyClass->isSubclassOf(EntitySerializableInterface::class) && is_array($value)) {
-                            /** @var array<string, mixed> $value */
-                            $v = $this->deserialize($propertyClass->name, $value);
-                        }
-                    }
-                } else if ($propertyClassName === 'array' && is_array($value) && $value !== []) {
-                    $arrayClass = null;
-                    $reflectionAttribute = current($property->getAttributes(SerializeAs::class));
-                    if ($reflectionAttribute !== false) {
-                        $arrayClass = $reflectionAttribute->getArguments()[0] ?? null;
-                    }
-                    if ($arrayClass !== null && class_exists($arrayClass)) {
-                        $arrayReflectionClass = new ReflectionClass($arrayClass);
-                        if ($arrayReflectionClass->isSubclassOf(EntitySerializableInterface::class)) {
-                            /** @var array<array<string, mixed>> $value */
-                            $v = array_map(fn(array $vItem) => $this->deserialize($arrayClass, $vItem), $value);
-                        }
+                    if ($propertyClass->isSubclassOf(EntitySerializableInterface::class) && is_array($value)) {
+                        /** @var array<string, mixed> $value */
+                        $v = $this->deserialize($propertyClass->name, $value);
                     }
                 }
-
-                $obj->$key = $v;
+            } else if ($propertyClassName === 'array' && is_array($value) && $value !== []) {
+                $arrayClass = null;
+                $reflectionAttribute = current($property->getAttributes(SerializeAs::class));
+                if ($reflectionAttribute !== false) {
+                    $arrayClass = $reflectionAttribute->getArguments()[0] ?? null;
+                }
+                if ($arrayClass !== null && class_exists($arrayClass)) {
+                    $arrayReflectionClass = new ReflectionClass($arrayClass);
+                    if ($arrayReflectionClass->isSubclassOf(EntitySerializableInterface::class)) {
+                        /** @var array<array<string, mixed>> $value */
+                        $v = array_map(fn(array $vItem) => $this->deserialize($arrayClass, $vItem), $value);
+                    }
+                }
             }
+
+            $obj->$key = $v;
         }
 
         return $obj;

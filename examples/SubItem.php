@@ -10,4 +10,5 @@ class SubItem implements EntitySerializableInterface
 {
     public int $id;
     public string $name;
+    public bool $isDeleted;
 }

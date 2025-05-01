@@ -35,18 +35,26 @@ class EntitySerializerTest extends TestCase
         $item->size = SizeEnum::S;
         $item->externalId = null;
 
-        $subItem = new SubItem();
-        $subItem->id = 1;
-        $subItem->name = 'test-sub-item';
+        $subItem1 = new SubItem();
+        $subItem1->id = 1;
+        $subItem1->name = 'test-sub-item';
+        $subItem1->isDeleted = false;
 
         $subItem2 = new SubItem();
         $subItem2->id = 1;
         $subItem2->name = 'test-sub-item-2';
+        $subItem2->isDeleted = true;
 
         $item->subItems = [
-            $subItem,
+            $subItem1,
             $subItem2,
         ];
+
+        $subItem = new SubItem();
+        $subItem->id = 99;
+        $subItem->name = 'test-sub-item-single';
+        $subItem->isDeleted = false;
+        $item->subItem = $subItem;
 
         $serializer = new EntitySerializer();
         $data = $serializer->serialize($item);
@@ -68,10 +76,17 @@ class EntitySerializerTest extends TestCase
         $this->assertIsArray($data['subItems'][0], 'SubItems[0] is not array');
         $this->assertEquals($item->subItems[0]->id, $data['subItems'][0]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[0]->name, $data['subItems'][0]['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItems[0]->isDeleted, $data['subItems'][0]['isDeleted'], 'Wrong subItem isDeleted');
 
         $this->assertIsArray($data['subItems'][1], 'SubItems[1] is not array');
         $this->assertEquals($item->subItems[1]->id, $data['subItems'][1]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[1]->name, $data['subItems'][1]['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItems[1]->isDeleted, $data['subItems'][1]['isDeleted'], 'Wrong subItem isDeleted');
+
+        $this->assertIsArray($data['subItem'], 'SubItem is not array');
+        $this->assertEquals($item->subItem->id, $data['subItem']['id'], 'Wrong subItem id');
+        $this->assertEquals($item->subItem->name, $data['subItem']['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItem->isDeleted, $data['subItem']['isDeleted'], 'Wrong subItem isDeleted');
     }
 
     /**
@@ -97,11 +112,18 @@ class EntitySerializerTest extends TestCase
                 [
                     'id' => 1,
                     'name' => 'test-sub-item',
+                    'isDeleted' => false,
                 ],
                 [
                     'id' => 2,
                     'name' => 'test-sub-item-2',
+                    'isDeleted' => true,
                 ],
+            ],
+            'subItem' => [
+                'id' => 99,
+                'name' => 'test-sub-item-single',
+                'isDeleted' => false,
             ],
         ];
 
@@ -123,8 +145,14 @@ class EntitySerializerTest extends TestCase
 
         $this->assertEquals($data['subItems'][0]['id'], $item->subItems[0]->id, 'Wrong subItem id');
         $this->assertEquals($data['subItems'][0]['name'], $item->subItems[0]->name, 'Wrong subItem name');
+        $this->assertEquals($data['subItems'][0]['isDeleted'], $item->subItems[0]->isDeleted, 'Wrong subItem isDeleted');
 
         $this->assertEquals($data['subItems'][1]['id'], $item->subItems[1]->id, 'Wrong subItem id');
         $this->assertEquals($data['subItems'][1]['name'], $item->subItems[1]->name, 'Wrong subItem name');
+        $this->assertEquals($data['subItems'][1]['isDeleted'], $item->subItems[1]->isDeleted, 'Wrong subItem isDeleted');
+
+        $this->assertEquals($data['subItem']['id'], $item->subItem->id, 'Wrong subItem id');
+        $this->assertEquals($data['subItem']['name'], $item->subItem->name, 'Wrong subItem name');
+        $this->assertEquals($data['subItem']['isDeleted'], $item->subItem->isDeleted, 'Wrong subItem isDeleted');
     }
 }

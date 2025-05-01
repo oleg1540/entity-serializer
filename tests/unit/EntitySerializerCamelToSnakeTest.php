@@ -35,18 +35,26 @@ class EntitySerializerCamelToSnakeTest extends TestCase
         $item->size = SizeEnum::S;
         $item->externalId = null;
 
-        $subItem = new SubItem();
-        $subItem->id = 1;
-        $subItem->name = 'test-sub-item';
+        $subItem1 = new SubItem();
+        $subItem1->id = 1;
+        $subItem1->name = 'test-sub-item';
+        $subItem1->isDeleted = false;
 
         $subItem2 = new SubItem();
         $subItem2->id = 1;
         $subItem2->name = 'test-sub-item-2';
+        $subItem2->isDeleted = true;
 
         $item->subItems = [
-            $subItem,
+            $subItem1,
             $subItem2,
         ];
+
+        $subItem = new SubItem();
+        $subItem->id = 99;
+        $subItem->name = 'test-sub-item-single';
+        $subItem->isDeleted = false;
+        $item->subItem = $subItem;
 
         $serializer = new EntitySerializerCamelToSnake();
         $data = $serializer->serialize($item);
@@ -68,10 +76,17 @@ class EntitySerializerCamelToSnakeTest extends TestCase
         $this->assertIsArray($data['sub_items'][0], 'SubItems[0] is not array');
         $this->assertEquals($item->subItems[0]->id, $data['sub_items'][0]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[0]->name, $data['sub_items'][0]['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItems[0]->isDeleted, $data['sub_items'][0]['is_deleted'], 'Wrong subItem isDeleted');
 
         $this->assertIsArray($data['sub_items'][1], 'SubItems[1] is not array');
         $this->assertEquals($item->subItems[1]->id, $data['sub_items'][1]['id'], 'Wrong subItem id');
         $this->assertEquals($item->subItems[1]->name, $data['sub_items'][1]['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItems[1]->isDeleted, $data['sub_items'][1]['is_deleted'], 'Wrong subItem isDeleted');
+
+        $this->assertIsArray($data['sub_item'], 'SubItem is not array');
+        $this->assertEquals($item->subItem->id, $data['sub_item']['id'], 'Wrong subItem id');
+        $this->assertEquals($item->subItem->name, $data['sub_item']['name'], 'Wrong subItem name');
+        $this->assertEquals($item->subItem->isDeleted, $data['sub_item']['is_deleted'], 'Wrong subItem isDeleted');
     }
 
     /**
@@ -97,11 +112,18 @@ class EntitySerializerCamelToSnakeTest extends TestCase
                 [
                     'id' => 1,
                     'name' => 'test-sub-item',
+                    'is_deleted' => false,
                 ],
                 [
                     'id' => 2,
                     'name' => 'test-sub-item-2',
+                    'is_deleted' => true,
                 ],
+            ],
+            'sub_item' => [
+                'id' => 99,
+                'name' => 'test-sub-item-single',
+                'is_deleted' => false,
             ],
         ];
 
@@ -123,8 +145,14 @@ class EntitySerializerCamelToSnakeTest extends TestCase
 
         $this->assertEquals($data['sub_items'][0]['id'], $item->subItems[0]->id, 'Wrong subItem id');
         $this->assertEquals($data['sub_items'][0]['name'], $item->subItems[0]->name, 'Wrong subItem name');
+        $this->assertEquals($data['sub_items'][0]['is_deleted'], $item->subItems[0]->isDeleted, 'Wrong subItem isDeleted');
 
         $this->assertEquals($data['sub_items'][1]['id'], $item->subItems[1]->id, 'Wrong subItem id');
         $this->assertEquals($data['sub_items'][1]['name'], $item->subItems[1]->name, 'Wrong subItem name');
+        $this->assertEquals($data['sub_items'][1]['is_deleted'], $item->subItems[1]->isDeleted, 'Wrong subItem isDeleted');
+
+        $this->assertEquals($data['sub_item']['id'], $item->subItem->id, 'Wrong subItem id');
+        $this->assertEquals($data['sub_item']['name'], $item->subItem->name, 'Wrong subItem name');
+        $this->assertEquals($data['sub_item']['is_deleted'], $item->subItem->isDeleted, 'Wrong subItem isDeleted');
     }
 }

@@ -34,16 +34,18 @@ class EntitySerializerCamelToSnake implements EntitySerializerInterface
     }
 
     /**
-     * @param array<string, mixed> $data
-     * @return array<string, mixed>
+     * @param array<string|int, mixed> $data
+     * @return array<string|int, mixed>
      */
     private function transformArray(array $data, bool $direction): array
     {
         $transformData = [];
         foreach ($data as $key => $value) {
-            $key = $direction ? self::camelToSnake($key) : self::snakeToCamel($key);
-            if (is_array($value) && array_filter(array_keys($value), 'is_string') !== []) {
-                /** @var array<string, mixed> $value */
+            if (is_string($key)) {
+                $key = $direction ? self::camelToSnake($key) : self::snakeToCamel($key);
+            }
+            if (is_array($value)) {
+                /** @var array<string|int, mixed> $value */
                 $transformData[$key] = $this->transformArray($value, $direction);
             } else {
                 $transformData[$key] = $value;
