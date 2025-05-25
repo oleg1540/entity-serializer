@@ -1,6 +1,6 @@
 {
     "name": "oleg1540/entity-serializer",
-    "description": "Serializer helps fast and simple serialize and unserialize objects into/from array",
+    "description": "The library helps to quickly and easily serialize an object to an array and deserialize an object from an array",
     "type": "library",
     "require-dev": {
         "phpunit/phpunit": "^12.1.2",
