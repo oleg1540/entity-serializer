@@ -1,7 +1,7 @@
 # Entity serializer
 The library helps to quickly and easily serialize an object to an array and deserialize an object from an array.
 All you need is to create a class with an entity description and implement `EntitySerializableInterface`.
-For example, it can be very useful for JSON APIs.
+For example, it can be very useful for JSON APIs or transforming responses from a database (e.g. `mysqli_fetch_*`, `pg_fetch_*`, etc.).
 
 ## Requirements
 PHP 8.3 and above. No extensions required!
