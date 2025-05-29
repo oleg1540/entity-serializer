@@ -9,7 +9,7 @@ PHP 8.3 and above. No extensions required!
 ## Installation
 This package can be installed as a [Composer](https://getcomposer.org/) dependency.
 ```shell
-composer install oleg1540/entity-serializer
+composer require oleg1540/entity-serializer
 ```
 
 ## Usage
