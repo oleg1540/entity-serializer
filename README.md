@@ -8,6 +8,17 @@ PHP 8.3 and above. No extensions required!
 
 ## Installation
 This package can be installed as a [Composer](https://getcomposer.org/) dependency.
+
+**Step 1.** Add repository in `repositories` section of your project `composer.json`.
+```json
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:oleg1540/entity-serializer.git"
+        }
+    ]
+```
+**Step 2.** Install library via composer.
 ```shell
 composer require oleg1540/entity-serializer
 ```
