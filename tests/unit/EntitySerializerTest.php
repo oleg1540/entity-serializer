@@ -107,6 +107,7 @@ class EntitySerializerTest extends TestCase
             'dateAdded' => '2025-04-19T10:46:31.158+00:00',
             'status' => StatusEnum::NEW->name,
             'size' => SizeEnum::S->value,
+            'usSize' => '',
             'externalId' => null,
             'subItems' => [
                 [
@@ -140,6 +141,7 @@ class EntitySerializerTest extends TestCase
         $this->assertEquals($data['size'], $item->size->value, 'Wrong size');
         $this->assertEquals($data['externalId'], $item->externalId, 'Wrong externalId');
         $this->assertTrue(!isset($item->uninitialized), 'Wrong uninitialized');
+        $this->assertTrue(!isset($item->usSize), 'Wrong usSize');
 
         $this->assertCount(count($data['subItems']), $item->subItems, 'Wrong subItems number');
 

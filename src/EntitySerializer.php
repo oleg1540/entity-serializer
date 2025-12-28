@@ -52,7 +52,7 @@ class EntitySerializer implements EntitySerializerInterface
                 if ($propertyClass->isSubclassOf(DateTimeInterface::class) && is_string($value)) {
                     $date = DateTime::createFromFormat($this->params->dateTimeFormat, $value) ?: new DateTime($value);
                     $v = $date;
-                } else if (enum_exists($propertyClassName) && (is_string($value) || is_int($value))) {
+                } else if (enum_exists($propertyClassName) && ((is_string($value) && $value !== '') || is_int($value))) {
                     $v = is_subclass_of($propertyClassName, BackedEnum::class)
                         ? $propertyClassName::tryFrom($value)
                         : (is_string($value) ? $propertyClassName::{$value} : null);
