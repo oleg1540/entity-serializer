@@ -20,6 +20,7 @@ class Item implements EntitySerializableInterface
     public DateTime $dateAdded;
     public StatusEnum $status;
     public SizeEnum $size;
+    public SizeEnum $usSize;
     public ?string $externalId = null;
     public int $uninitialized;
 
