@@ -34,6 +34,7 @@ class EntitySerializerTest extends TestCase
         $item->status = StatusEnum::NEW;
         $item->size = SizeEnum::S;
         $item->externalId = null;
+        $item->mixedValue = 1;
 
         $subItem1 = new SubItem();
         $subItem1->id = 1;
@@ -69,6 +70,7 @@ class EntitySerializerTest extends TestCase
         $this->assertEquals($item->size->value, $data['size'], 'Wrong size');
         $this->assertEquals($item->externalId, $data['externalId'], 'Wrong externalId');
         $this->assertArrayNotHasKey('uninitialized', $data, 'Wrong uninitialized');
+        $this->assertEquals($item->mixedValue, $data['mixedValue'], 'Wrong mixedValue');
 
         $this->assertIsArray($data['subItems'], 'SubItems is not array');
         $this->assertCount(count($item->subItems), $data['subItems'], 'Wrong subItems number');
@@ -109,6 +111,7 @@ class EntitySerializerTest extends TestCase
             'size' => SizeEnum::S->value,
             'usSize' => '',
             'externalId' => null,
+            'mixedValue' => 1.123,
             'subItems' => [
                 [
                     'id' => 1,
@@ -142,6 +145,7 @@ class EntitySerializerTest extends TestCase
         $this->assertEquals($data['externalId'], $item->externalId, 'Wrong externalId');
         $this->assertTrue(!isset($item->uninitialized), 'Wrong uninitialized');
         $this->assertTrue(!isset($item->usSize), 'Wrong usSize');
+        $this->assertEquals($data['mixedValue'], $item->mixedValue, 'Wrong mixedValue');
 
         $this->assertCount(count($data['subItems']), $item->subItems, 'Wrong subItems number');
 

@@ -23,6 +23,7 @@ class Item implements EntitySerializableInterface
     public SizeEnum $usSize;
     public ?string $externalId = null;
     public int $uninitialized;
+    public int|float $mixedValue;
 
     /** @var SubItem[] $subItems */
     #[SerializeAs(SubItem::class)]
